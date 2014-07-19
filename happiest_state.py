@@ -1,19 +1,80 @@
 import sys
 import math
 import json
+from collections import defaultdict
+
+states = {
+		'AK': 'Alaska',
+		'AL': 'Alabama',
+		'AR': 'Arkansas',
+		'AS': 'American Samoa',
+		'AZ': 'Arizona',
+		'CA': 'California',
+		'CO': 'Colorado',
+		'CT': 'Connecticut',
+		'DC': 'District of Columbia',
+		'DE': 'Delaware',
+		'FL': 'Florida',
+		'GA': 'Georgia',
+		'GU': 'Guam',
+		'HI': 'Hawaii',
+		'IA': 'Iowa',
+		'ID': 'Idaho',
+		'IL': 'Illinois',
+		'IN': 'Indiana',
+		'KS': 'Kansas',
+		'KY': 'Kentucky',
+		'LA': 'Louisiana',
+		'MA': 'Massachusetts',
+		'MD': 'Maryland',
+		'ME': 'Maine',
+		'MI': 'Michigan',
+		'MN': 'Minnesota',
+		'MO': 'Missouri',
+		'MP': 'Northern Mariana Islands',
+		'MS': 'Mississippi',
+		'MT': 'Montana',
+		'NA': 'National',
+		'NC': 'North Carolina',
+		'ND': 'North Dakota',
+		'NE': 'Nebraska',
+		'NH': 'New Hampshire',
+		'NJ': 'New Jersey',
+		'NM': 'New Mexico',
+		'NV': 'Nevada',
+		'NY': 'New York',
+		'OH': 'Ohio',
+		'OK': 'Oklahoma',
+		'OR': 'Oregon',
+		'PA': 'Pennsylvania',
+		'PR': 'Puerto Rico',
+		'RI': 'Rhode Island',
+		'SC': 'South Carolina',
+		'SD': 'South Dakota',
+		'TN': 'Tennessee',
+		'TX': 'Texas',
+		'UT': 'Utah',
+		'VA': 'Virginia',
+		'VI': 'Virgin Islands',
+		'VT': 'Vermont',
+		'WA': 'Washington',
+		'WI': 'Wisconsin',
+		'WV': 'West Virginia',
+		'WY': 'Wyoming'
+}
 
 def hw():
-    print 'Hello, world!'
+	print 'Hello, world!'
 
 def lines(fp):
-    return len(fp)
+	return len(fp)
+
 
 def parseData(l):
 	par = json.loads(l)
-	tweet = par.get('place')
-	place = json.loads(tweet)
-	#encoded_tweet = tweet.encode('utf-8')
-	print type(place)
+	tweet = par.get('text','')
+	encoded_tweet = tweet.encode('utf-8')
+	return encoded_tweet
 
 def buildDict(fp):
 	scores = {}
@@ -21,15 +82,6 @@ def buildDict(fp):
 		term, score = line.split("\t")
 		scores[term] = int(score)
 	return scores
-
-def newDict(fp, dic):
-	undefined_term = {}
-	for line in fp:
-		tweet_str = parseData(line)
-		for word in tweet_str.split(" "):
-			if(dic.has_key(word)==False):
-				undefined_term[word]=[0,0,0]
-	return undefined_term
 
 def computeSent(fp, num_tweet, text_sent, terms):
 	for i in range(num_tweet):
@@ -49,28 +101,41 @@ def computeSent(fp, num_tweet, text_sent, terms):
 	return terms
 
 
-def computeFreq(fp):
-	all_terms = {}
-	cnt = 0
-	for line in fp:
-		tweet_str = parseData(line)
-		for word in tweet_str.split():
-			all_terms[word] = all_terms.get(word, 0)+1
-			#print word, "************",all_terms.get(word,0)
-			cnt +=1
-		#print cnt
-		#print all_terms
-	return all_terms, cnt
-
-
-
 
 
 def main():
-    sent_file = open(sys.argv[1])
-    tweet_file = open(sys.argv[2])
-    for line in tweet_file:
+	sent_file = open(sys.argv[1])
+	tweet_file = open(sys.argv[2])
+	tweet_content = tweet_file.readlines()
+
+	tweet_score = []
+	sentdict = buildDict(sent_file)
+	for line in tweet_content:
 		tweet_str = parseData(line)
-    
+		sum = 0
+		for word in tweet_str.split(" "):
+			sum = sum + sentdict.get(word, 0)
+		tweet_score.append(sum)
+
+	state_senti = defaultdict(lambda: 0)
+	for i in range(len(tweet_content)):
+		par = json.loads(tweet_content[i])
+		if(par.has_key('place') and par.get('place')):
+			addr = par['place']['full_name'].strip('!''@''/''~').encode('utf-8').split(', ')
+			#print addr
+			for pl in addr:
+				#print len(addr), pl
+				for brif, fname in states.items():
+					if pl==fname or pl==brif:
+						#print state_senti[brif]
+						state_senti[brif] += tweet_score[i]
+					
+	happist = max(state_senti, key=state_senti.get)
+	print happist
+		
 if __name__ == '__main__':
-    main()
+	main()
+
+
+
+

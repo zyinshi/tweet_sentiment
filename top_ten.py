@@ -48,37 +48,29 @@ def computeSent(fp, num_tweet, text_sent, terms):
 	return terms
 
 
-
+def computeFreq(fp):
+	all_terms = {}
+	cnt = 0
+	for line in fp:
+		tweet_str = parseData(line)
+		for word in tweet_str.split():
+			all_terms[word] = all_terms.get(word, 0)+1
+			#print word, "************",all_terms.get(word,0)
+			cnt +=1
+		#print cnt
+		#print all_terms
+	return all_terms, cnt
 
 
 
 
 
 def main():
-    sent_file = open(sys.argv[1])
-    tweet_file = open(sys.argv[2])
-    tweet_text = tweet_file.readlines()
-    line_num = lines(tweet_text)
-    #print line_num
-    #hw()
-    tweet_score = []
-    sentdict = buildDict(sent_file)
-    #termdict = newDict(tweet_file, sentdict)
-    #print termdict
-    for line in tweet_text:
-    	tweet_str = parseData(line)
-    	sum = 0
-    	for word in tweet_str.split(" "):
-    		sum = sum + sentdict.get(word, 0)
-    	tweet_score.append(sum)
-    #print tweet_score
-    termdict = newDict(tweet_text, sentdict)
-    #print termdict
-    #print tweet_score
-    new_dict = computeSent(tweet_text, line_num, tweet_score, termdict)
-
-    for term in new_dict.keys():
-    	print term, new_dict[term][2]
+    #sent_file = open(sys.argv[1])
+    tweet_file = open(sys.argv[1])
+    freq_dict, count = computeFreq(tweet_file)
+    for term in freq_dict.keys():
+    	print '%s %.4f'%(term, float(freq_dict[term])/count)
     #hw()
     #lines(sent_file)
     #lines(tweet_file)

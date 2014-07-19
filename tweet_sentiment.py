@@ -1,5 +1,3 @@
-# skeleton codes provided by https://github.com/uwescience/datasci_course_materials/tree/master/assignment1
-
 import sys
 import json
 
