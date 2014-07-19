@@ -24,19 +24,15 @@ def parseData(l):
 def main():
     sent_file = open(sys.argv[1])
     tweet_file = open(sys.argv[2])
-    lines(tweet_file)
-    print type(sent_file.readlines())
-    #hw()
+    tweet_text = tweet_file.readlines()
     tweet_score = []
     sentdict = buildDict(sent_file)
-    for line in tweet_file:
+    for line in tweet_text:
     	tweet_str = parseData(line)
     	sum = 0
     	for word in tweet_str.split(" "):
     		sum = sum + sentdict.get(word, 0)
-    	tweet_score.append(sum)
-    print tweet_score
-    
+    	print sum
     
 
 if __name__ == '__main__':

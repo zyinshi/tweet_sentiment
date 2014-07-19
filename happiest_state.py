@@ -63,12 +63,6 @@ states = {
 		'WY': 'Wyoming'
 }
 
-def hw():
-	print 'Hello, world!'
-
-def lines(fp):
-	return len(fp)
-
 
 def parseData(l):
 	par = json.loads(l)
@@ -82,24 +76,6 @@ def buildDict(fp):
 		term, score = line.split("\t")
 		scores[term] = int(score)
 	return scores
-
-def computeSent(fp, num_tweet, text_sent, terms):
-	for i in range(num_tweet):
-		tweet_str = parseData(fp[i])
-		for word in tweet_str.split(" "): 
-			if(terms.has_key(word)):
-				terms[word][0] += text_sent[i]
-				terms[word][1] += 1
-				#print "*************", terms[word][0]
-	for value in terms.values():
-		#print value[0]
-		if(value[1]==0):
-			value[2]=0
-		else:
-			alpha = value[0]/value[1]
-			value[2] = 5/(1+math.exp(-alpha))-0.5
-	return terms
-
 
 
 

@@ -59,29 +59,19 @@ def main():
     tweet_file = open(sys.argv[2])
     tweet_text = tweet_file.readlines()
     line_num = lines(tweet_text)
-    #print line_num
-    #hw()
     tweet_score = []
     sentdict = buildDict(sent_file)
-    #termdict = newDict(tweet_file, sentdict)
-    #print termdict
     for line in tweet_text:
     	tweet_str = parseData(line)
     	sum = 0
     	for word in tweet_str.split(" "):
     		sum = sum + sentdict.get(word, 0)
     	tweet_score.append(sum)
-    #print tweet_score
     termdict = newDict(tweet_text, sentdict)
-    #print termdict
-    #print tweet_score
     new_dict = computeSent(tweet_text, line_num, tweet_score, termdict)
 
     for term in new_dict.keys():
     	print term, new_dict[term][2]
-    #hw()
-    #lines(sent_file)
-    #lines(tweet_file)
-
+    
 if __name__ == '__main__':
     main()
